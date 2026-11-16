@@ -22,7 +22,7 @@ class SistemaDeBiblioteca
 	static final int[] LIMITE_POR_TIPO = {2, 4, 1}; // livros simultâneos
 
 	public static int cadastrarLivro (int [] codigoLivro, String[] tituloLivros, String[] autoresLivros, int[] categoriasLivros,
-	                                  int[] anosPublicacao, int[] totalExemplares, int[] exemplaresDisponiveis, int qtdLivros, Scanner sc)  {
+	                                  int[] anosPublicacao, int[] totalExemplares, int[] exemplaresDisponiveis, int qtdLivros, Scanner sc, int[] contadorEmprestimos)  {
 
 		// Verifica se o vetor está cheio, senão segue para cadastro
 		if (qtdLivros >= MAX_LIVROS) {
@@ -158,6 +158,7 @@ class SistemaDeBiblioteca
 			}
 		} while (!numeroValido);
 
+		contadorEmprestimos[qtdLivros] = 0;
 		codigoLivro[qtdLivros] = codigo;
 		tituloLivros[qtdLivros] = tituloLivro;
 		autoresLivros[qtdLivros] = autorLivro;
@@ -298,6 +299,35 @@ class SistemaDeBiblioteca
 		                   "\nExemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
 	}
 
+	public static void exibirLivroMaisEmprestado(String[] tituloLivros, int[] contadorEmprestimos, int qtdLivros ) {
+
+
+		if (qtdLivros == 0) {
+			System.out.println("[AVISO] O acervo está vazio.");
+			return;
+		}
+
+
+		int emprestimoMaior = contadorEmprestimos[0];
+		int indiceMaiorEmprestimo = 0;
+
+
+		for (int i=1; i< qtdLivros; i++) {
+			if (contadorEmprestimos[i] > emprestimoMaior) {
+				indiceMaiorEmprestimo = i;
+				emprestimoMaior = contadorEmprestimos[i];
+			}
+		}
+
+		if (emprestimoMaior == 0) {
+			System.out.println("[AVISO] Nenhum empréstimo registrado.");
+			return;
+		}
+		System.out.println("Titulo: " + tituloLivros[indiceMaiorEmprestimo] + "\nQuantidade de empréstimos: " + emprestimoMaior);
+
+
+
+	}
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner (System.in);
@@ -308,6 +338,7 @@ class SistemaDeBiblioteca
 		int[] anosPublicacao = new int[MAX_LIVROS];
 		int[] totalExemplares = new int[MAX_LIVROS];
 		int[] exemplaresDisponiveis = new int[MAX_LIVROS];
+		int[] contadorEmprestimos = new int[MAX_LIVROS];
 		int qtdLivros = 0;
 
 		int opcao = -1;
@@ -322,6 +353,7 @@ class SistemaDeBiblioteca
 				System.out.println("[3] Buscar livro por código");
 				System.out.println("[4] Buscar livro por título");
 				System.out.println("[5] Listar livros disponíveis");
+				System.out.println("[6] Exibir livro mais emprestado");
 				System.out.println("[0] Sair");
 				System.out.println("==================================================");
 				System.out.print("Escolha uma opçao: ");
@@ -331,7 +363,7 @@ class SistemaDeBiblioteca
 				case 1:
 					qtdLivros = cadastrarLivro(codigoLivros, tituloLivros, autoresLivros,
 					                           categoriasLivros, anosPublicacao, totalExemplares,
-					                           exemplaresDisponiveis, qtdLivros, sc);
+					                           exemplaresDisponiveis, qtdLivros, sc, contadorEmprestimos);
 					break;
 				case 2:
 					listarLivros(codigoLivros, tituloLivros, autoresLivros,
@@ -352,6 +384,9 @@ class SistemaDeBiblioteca
 					listarLivrosDisponiveis(codigoLivros, tituloLivros, autoresLivros,
 					                        categoriasLivros, anosPublicacao, totalExemplares,
 					                        exemplaresDisponiveis, qtdLivros);
+					break;
+				case 6:
+					exibirLivroMaisEmprestado(tituloLivros, contadorEmprestimos, qtdLivros);
 					break;
 				case 0:
 					System.out.println("Saindo do sistema...");
