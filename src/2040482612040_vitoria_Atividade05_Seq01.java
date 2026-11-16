@@ -11,6 +11,7 @@ class SistemaDeBiblioteca
 
 	static final String[] NOMES_CATEGORIAS = {
 		"Literatura", "Didático", "Técnico",
+
 		"Infantojuvenil", "Outros"
 	};
 
@@ -30,134 +31,30 @@ class SistemaDeBiblioteca
 			return qtdLivros;
 		}
 
-		// Cadastro do código do livro
-		int codigo = 0;
-		boolean condicao = false;
-		do {
-			try {
-				System.out.println("Digite o código do livro: ");
-				codigo = sc.nextInt();
-
-				if (codigo > 9999 || codigo < 100) {
-					System.out.println("[ERRO] O código deve estar entre 100 e 9999!");
-				} else {
-					boolean codigoRepetido = false;
-					for (int i=0; i < qtdLivros; i++) {
-						if (codigo == codigoLivro[i] ) {
-							System.out.println("[ERRO] O código já existe!");
-							codigoRepetido = true;
-
-							break;
-						}
-
-					}
-					if (codigoRepetido == false) {
-						condicao = true;
-					}
-				}
-
-				// Erro caso o usuário digite letras ou caracteres inválidos
-			} catch (InputMismatchException e) {
-				System.out.println("[ERRO] Digite apenas números inteiros!");
-				sc.nextLine();
-			}
-		} while (!condicao);
-
+		int codigo = lerCodigoLivro(codigoLivro, qtdLivros, sc);
 		sc.nextLine();
 
-		//Cadastra o titulo do livro
-		String tituloLivro;
-
-		do {
-			System.out.println("Digite o título do livro: ");
-			tituloLivro = sc.nextLine().trim();
-
-			if (tituloLivro.isEmpty() || tituloLivro.contains(";")) {
-				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
-			}
-
-		} while (tituloLivro.isEmpty() || tituloLivro.contains(";"));
+		String tituloLivro = lerTextoLivro(sc, "Digite o título do livro: ");
+		String autorLivro = lerTextoLivro(sc, "Digite o autor do livro: ");
 
 
-		// Cadastra o autor do autor do livro
-		String autorLivro;
-		do {
-			System.out.println("Digite o autor do livro: ");
-			autorLivro = sc.nextLine().trim();
+		for (int i = 0; i < NOMES_CATEGORIAS.length; i++) {
+			System.out.println("[" + (i + 1) + "] " + NOMES_CATEGORIAS[i]);
+		}
 
-			if (autorLivro.isEmpty() || autorLivro.contains(";")) {
-				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
-			}
-
-		} while (autorLivro.isEmpty() || autorLivro.contains(";"));
+		int categoriaEscolhida = lerInteiroValido(
+		                             sc, "Digite a categoria: ", 1, NOMES_CATEGORIAS.length
+		                         );
 
 
-		// Cadastra a categoria do livro
-		int categoriaEscolhida = 0;
-		boolean condicaoValida = false;
-		do {
-
-			try {
-				for (int i=0; i < NOMES_CATEGORIAS.length; i++) {
-					System.out.println("[" + (i + 1) + "] " + NOMES_CATEGORIAS[i]);
-				}
-				System.out.println("Digite a categoria: ");
-				categoriaEscolhida = sc.nextInt();
-
-				if (categoriaEscolhida > 5 || categoriaEscolhida < 1) {
-					System.out.println("[ERRO] Deve ser um número de 1 a 5");
-				} else {
-					condicaoValida = true;
-
-				}
-			} catch (InputMismatchException e) {
-				System.out.println("[ERRO] Digite apenas números (1 a 5)");
-				sc.nextLine();
-			}
-		} while (!condicaoValida);
+		int anoPublicacao = lerInteiroValido(
+		                        sc, "Digite o ano de publicação: ", 1450, ANO_ATUAL
+		                    );
 
 
-		// Cadastra ano de publicação
-		int anoPublicacao = 0;
-		boolean anoValido = false;
-		do {
-			try {
-
-				System.out.print("Digite o ano de publicação: ");
-				anoPublicacao = sc.nextInt();
-
-				if (anoPublicacao < 1450 || anoPublicacao > ANO_ATUAL) {
-					System.out.println("[ERRO] Digite um ano de publicação válido");
-				} else {
-					anoValido = true;
-				}
-			} catch (InputMismatchException e) {
-				System.out.println("[ERRO] Digite apenas números");
-				sc.nextLine();
-			}
-		} while (!anoValido);
-
-
-		// Cadastra quantidade de exemplares
-		int quantidadeExemplares = 0;
-		boolean numeroValido = false;
-
-		do {
-			try {
-				System.out.print("Digite a quantidade de exemplares: ");
-				quantidadeExemplares = sc.nextInt();
-
-				if (quantidadeExemplares < 1 || quantidadeExemplares > 50) {
-					System.out.println("[ERRO] A quantidade de exemplares deve estar entre 1 e 50");
-				} else  {
-					numeroValido = true;
-				}
-			} catch (InputMismatchException e) {
-				System.out.println("[ERRO] Digite apenas números");
-				sc.nextLine();
-			}
-		} while (!numeroValido);
-
+		int quantidadeExemplares = lerInteiroValido(
+		                               sc, "Digite a quantidade de exemplares: ", 1, 50
+		                           );
 		contadorEmprestimos[qtdLivros] = 0;
 		codigoLivro[qtdLivros] = codigo;
 		tituloLivros[qtdLivros] = tituloLivro;
@@ -327,6 +224,79 @@ class SistemaDeBiblioteca
 
 
 
+	}
+
+
+	public static int lerCodigoLivro (int[] codigoLivro, int qtdLivros, Scanner sc) {
+		// Cadastro do código do livro
+		int codigo = 0;
+		boolean condicao = false;
+		do {
+			try {
+				System.out.println("Digite o código do livro: ");
+				codigo = sc.nextInt();
+
+				if (codigo > 9999 || codigo < 100) {
+					System.out.println("[ERRO] O código deve estar entre 100 e 9999!");
+				} else {
+					boolean codigoRepetido = false;
+					for (int i=0; i < qtdLivros; i++) {
+						if (codigo == codigoLivro[i] ) {
+							System.out.println("[ERRO] O código já existe!");
+							codigoRepetido = true;
+
+							break;
+						}
+
+					}
+					if (!codigoRepetido) {
+						condicao = true;
+					}
+				}
+
+				// Erro caso o usuário digite letras ou caracteres inválidos
+			} catch (InputMismatchException e) {
+				System.out.println("[ERRO] Digite apenas números inteiros!");
+				sc.nextLine();
+			}
+		} while (!condicao);
+
+		return codigo;
+	}
+
+	public static String lerTextoLivro (Scanner sc, String mensagem) {
+		String texto;
+		do {
+			System.out.println(mensagem);
+			texto = sc.nextLine().trim();
+
+			if (texto.isEmpty() || texto.contains(";")) {
+				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
+			}
+		} while (texto.isEmpty() || texto.contains(";"));
+
+		return texto;
+	}
+
+	public static int lerInteiroValido (Scanner sc, String mensagem, int minimo, int maximo) {
+		int numero = 0;
+		boolean numeroValido = false;
+		do {
+			try {
+				System.out.println(mensagem);
+				numero = sc.nextInt();
+
+				if (numero >= minimo && numero <= maximo) {
+					numeroValido = true;
+				} else {
+					System.out.println("[ERRO] Digite um número entre " + minimo + " e " + maximo);
+				}
+			} catch (InputMismatchException e ) {
+				System.out.println("[ERRO] Digite apenas números inteiros!");
+				sc.nextLine();
+			}
+		}	while (!numeroValido);
+		return numero;
 	}
 
 	public static void main(String[] args) {
