@@ -8,7 +8,7 @@ Tema: Sistema de Biblioteca
 | :--- | :--- | :--- | :--- |
 | **E0** - Especificação | Aula #2 <br> 02/10 | Escolha do tema (sorteio) + documento de requisitos: entidades, atributos, 5 a 8 funcionalidades mínimas | Especificação técnica do projeto: descrição de como vai ser o projeto e como ele vai funcionar (sem código) |
 | **E1** - Prototipagem do Sistema | Aula #3 <br> 09/10 | Mapa do menu principal, mockup visual do console (relatórios e formulários), regras de validação e planejamento/assinaturas de métodos | Prototipagem de telas e fluxo de dados (foco no tema Biblioteca: validação de código do livro, relatório de empréstimos e matriz de empréstimos) |
-| **E2** | - | - | - |
+| **E2** - Implementação de Vetores e Matrizes | 19/11 | Cadastro e consulta de livros, gerenciamento do acervo, cadastro e listagem de leitores, realização de empréstimos e relatório de perfil de uso | Vetores, matrizes, estruturas de repetição, estruturas condicionais e validação de dados |
 | **E3** | - | - | - |
 | **E4** | - | - | - |
 | **E5** | - | - | - |
