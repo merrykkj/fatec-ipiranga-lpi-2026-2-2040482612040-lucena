@@ -755,6 +755,88 @@ class SistemaDeBiblioteca
 		// Retorna false caso não encontre nenhum empréstimo atrasado.
 		return false;
 	}
+
+
+	// Exibe o relatório de empréstimos por tipo de leitor e categoria.
+	public static void relatorioPerfilUso() {
+		if (qtdEmprestimos == 0) {
+			System.out.println("[AVISO] Nenhum empréstimo registrado.");
+			return;
+		}
+
+		System.out.println("========== RELATÓRIO DE PERFIL DE USO ==========");
+
+		// Define o espaçamento das colunas para deixar a tabela alinhada.
+		String formato = "%-16s %-12s %-10s %-10s %-16s %-10s %s%n";
+		System.out.printf(formato, "Tipo de leitor", "Literatura",
+		                  "Didático", "Técnico", "Infantojuvenil",
+		                  "Outros", "Total");
+
+		int[] totalColunas = new int[5];
+		int totalGeral = 0;
+
+		// Percorre a matriz calculando os totais de cada linha, coluna e o total geral.
+		// As linhas representam os tipos de leitores e as colunas as categorias.
+		for (int i = 0; i < emprestimosTipoCategoria.length; i++) {
+			int totalLinha = 0;
+
+			for (int j = 0; j < emprestimosTipoCategoria[i].length; j++) {
+				totalLinha = totalLinha + emprestimosTipoCategoria[i][j];
+				totalColunas[j] = emprestimosTipoCategoria[i][j] + totalColunas[j];
+				totalGeral = totalGeral + emprestimosTipoCategoria[i][j];
+			}
+
+			System.out.printf(formato,
+			                  NOMES_TIPOS[i],
+			                  emprestimosTipoCategoria[i][0],
+			                  emprestimosTipoCategoria[i][1],
+			                  emprestimosTipoCategoria[i][2],
+			                  emprestimosTipoCategoria[i][3],
+			                  emprestimosTipoCategoria[i][4],
+			                  totalLinha);
+		}
+
+		// Exibe o total de cada categoria e o total geral de empréstimos.
+		System.out.printf(formato,
+		                  "Total",
+		                  totalColunas[0],
+		                  totalColunas[1],
+		                  totalColunas[2],
+		                  totalColunas[3],
+		                  totalColunas[4],
+		                  totalGeral);
+
+		// Busca a categoria mais emprestada de cada tipo de leitor,
+		// utilizando a primeira posição como referência para a comparação.
+		for (int i = 0; i < emprestimosTipoCategoria.length; i++) {
+			int indiceMaiorCategoria = 0;
+
+			for (int j = 1; j < emprestimosTipoCategoria[i].length; j++) {
+				if (emprestimosTipoCategoria[i][j] > emprestimosTipoCategoria[i][indiceMaiorCategoria]) {
+					indiceMaiorCategoria = j;
+				}
+			}
+
+			if (emprestimosTipoCategoria[i][indiceMaiorCategoria] == 0) {
+				System.out.println(NOMES_TIPOS[i] + ": Nenhum empréstimo registrado");
+			} else {
+				System.out.println(NOMES_TIPOS[i] + ": " + NOMES_CATEGORIAS[indiceMaiorCategoria]);
+			}
+		}
+
+		// Compara os totais das colunas para encontrar a categoria mais emprestada no geral.
+		int indiceMaiorGeral = 0;
+
+		for (int i = 1; i < totalColunas.length; i++) {
+			if (totalColunas[i] > totalColunas[indiceMaiorGeral]) {
+				indiceMaiorGeral = i;
+			}
+		}
+
+		System.out.println("\nCategoria mais emprestada no geral: "
+		                   + NOMES_CATEGORIAS[indiceMaiorGeral]);
+	}
+
 	public static void main(String[] args) {
 		int opcao = -1;
 
@@ -771,6 +853,7 @@ class SistemaDeBiblioteca
 				System.out.println("[6] Cadastrar leitor");
 				System.out.println("[7] Listar leitores");
 				System.out.println("[8] Realizar Empréstimo");
+				System.out.println("[9] Relatório de perfil de uso");
 				System.out.println("[0] Sair");
 				System.out.println("==================================================");
 				System.out.print("Escolha uma opçao: ");
@@ -801,6 +884,9 @@ class SistemaDeBiblioteca
 					break;
 				case 8:
 					realizarEmprestimo();
+					break;
+				case 9:
+					relatorioPerfilUso();
 					break;
 				case 0:
 					System.out.println("Saindo do sistema...");
