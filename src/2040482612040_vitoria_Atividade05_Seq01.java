@@ -1,6 +1,6 @@
 import java.util.Scanner;
 import java.util.InputMismatchException;
-class SistemaDeBiblioteca 
+class SistemaDeBiblioteca
 {
 	static final int MAX_LIVROS = 200;
 	static final int MAX_LEITORES = 100;
@@ -23,12 +23,15 @@ class SistemaDeBiblioteca
 
 	public static int cadastrarLivro (int [] codigoLivro, String[] tituloLivros, String[] autoresLivros, int[] categoriasLivros,
 	                                  int[] anosPublicacao, int[] totalExemplares, int[] exemplaresDisponiveis, int qtdLivros, Scanner sc)  {
+
+		// Verifica se o vetor está cheio, senão segue para cadastro
 		if (qtdLivros >= MAX_LIVROS) {
 			System.out.print("[ERRO] O acervo está totalmente cheio!");
 			return qtdLivros;
 		}
 
-		int codigo;
+		// Cadastro do código do livro
+		int codigo = 0;
 		boolean condicao = false;
 		do {
 			try {
@@ -43,6 +46,7 @@ class SistemaDeBiblioteca
 						if (codigo == codigoLivro[i] ) {
 							System.out.println("[ERRO] O código já existe!");
 							codigoRepetido = true;
+
 							break;
 						}
 
@@ -52,11 +56,118 @@ class SistemaDeBiblioteca
 					}
 				}
 
+				// Erro caso o usuário digite letras ou caracteres inválidos
 			} catch (InputMismatchException e) {
 				System.out.println("[ERRO] Digite apenas números inteiros!");
 				sc.nextLine();
 			}
 		} while (!condicao);
+
+		sc.nextLine();
+
+		//Cadastra o titulo do livro
+		String tituloLivro;
+
+		do {
+			System.out.println("Digite o título do livro: ");
+			tituloLivro = sc.nextLine().trim();
+
+			if (tituloLivro.isEmpty() || tituloLivro.contains(";")) {
+				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
+			}
+
+		} while (tituloLivro.isEmpty() || tituloLivro.contains(";"));
+
+
+		// Cadastra o autor do autor do livro
+		String autorLivro;
+		do {
+			System.out.println("Digite o autor do livro: ");
+			autorLivro = sc.nextLine().trim();
+
+			if (autorLivro.isEmpty() || autorLivro.contains(";")) {
+				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
+			}
+
+		} while (autorLivro.isEmpty() || autorLivro.contains(";"));
+
+
+		// Cadastra a categoria do livro
+		int categoriaEscolhida = 0;
+		boolean condicaoValida = false;
+		do {
+
+			try {
+				for (int i=0; i < NOMES_CATEGORIAS.length; i++) {
+					System.out.println("[" + (i + 1) + "] " + NOMES_CATEGORIAS[i]);
+				}
+				System.out.println("Digite a categoria: ");
+				categoriaEscolhida = sc.nextInt();
+
+				if (categoriaEscolhida > 5 || categoriaEscolhida < 1) {
+					System.out.println("[ERRO] Deve ser um número de 1 a 5");
+				} else {
+					condicaoValida = true;
+
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("[ERRO] Digite apenas números (1 a 5)");
+				sc.nextLine();
+			}
+		} while (!condicaoValida);
+
+
+		// Cadastra ano de publicação
+		int anoPublicacao = 0;
+		boolean anoValido = false;
+		do {
+			try {
+
+				System.out.print("Digite o ano de publicação: ");
+				anoPublicacao = sc.nextInt();
+
+				if (anoPublicacao < 1450 || anoPublicacao > ANO_ATUAL) {
+					System.out.println("[ERRO] Digite um ano de publicação válido");
+				} else {
+					anoValido = true;
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("[ERRO] Digite apenas números");
+				sc.nextLine();
+			}
+		} while (!anoValido);
+
+
+		// Cadastra quantidade de exemplares
+		int quantidadeExemplares = 0;
+		boolean numeroValido = false;
+
+		do {
+			try {
+				System.out.print("Digite a quantidade de exemplares: ");
+				quantidadeExemplares = sc.nextInt();
+
+				if (quantidadeExemplares < 1 || quantidadeExemplares > 50) {
+					System.out.println("[ERRO] A quantidade de exemplares deve estar entre 1 e 50");
+				} else  {
+					numeroValido = true;
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("[ERRO] Digite apenas números");
+				sc.nextLine();
+			}
+		} while (!numeroValido);
+
+		codigoLivro[qtdLivros] = codigo;
+		tituloLivros[qtdLivros] = tituloLivro;
+		autoresLivros[qtdLivros] = autorLivro;
+		categoriasLivros[qtdLivros] = categoriaEscolhida;
+		anosPublicacao[qtdLivros] = anoPublicacao;
+		totalExemplares[qtdLivros] = quantidadeExemplares;
+		exemplaresDisponiveis[qtdLivros] = quantidadeExemplares;
+
+		qtdLivros++;
+		System.out.println("Cadastro concluído com sucesso!");
 		return qtdLivros;
 
 	}
@@ -72,36 +183,44 @@ class SistemaDeBiblioteca
 		int[] exemplaresDisponiveis = new int[MAX_LIVROS];
 		int qtdLivros = 0;
 
-		int opcao;
+		int opcao = -1;
 
 		do {
-			System.out.println("==================================================");
-			System.out.println("              SISTEMA DE BIBLIOTECA");
-			System.out.println("==================================================");
-			System.out.println("[1] Cadastrar Livro");
-			System.out.println("[2] Listar Livros");
-			System.out.println("[3] Relatório de Empréstimos em Atraso");
-			System.out.println("[4] Empréstimos Mensais");
-			System.out.println("[0] Sair");
-			System.out.println("==================================================");
-			System.out.print("Escolha uma opção: ");
-			opcao = sc.nextInt();
+			try {
+				System.out.println("==================================================");
+				System.out.println("              SISTEMA DE BIBLIOTECA");
+				System.out.println("==================================================");
+				System.out.println("[1] Cadastrar Livro");
+				System.out.println("[2] Listar Livros");
+				System.out.println("[3] Relatório de Empréstimos em Atraso");
+				System.out.println("[4] Empréstimos Mensais");
+				System.out.println("[0] Sair");
+				System.out.println("==================================================");
+				System.out.print("Escolha uma opção: ");
+				opcao = sc.nextInt();
 
-			switch (opcao) {
-			case 1:
-				qtdLivros = cadastrarLivro(codigoLivros, tituloLivros, autoresLivros,
-				                           categoriasLivros, anosPublicacao, totalExemplares,
-				                           exemplaresDisponiveis, qtdLivros, sc);
-				break;
-			case 0:
-				System.out.println("Saindo do sistema...");
-				break;
+				switch (opcao) {
+				case 1:
+					qtdLivros = cadastrarLivro(codigoLivros, tituloLivros, autoresLivros,
+					                           categoriasLivros, anosPublicacao, totalExemplares,
+					                           exemplaresDisponiveis, qtdLivros, sc);
+					break;
+				case 0:
+					System.out.println("Saindo do sistema...");
+					break;
+
+				default:
+					System.out.println("[ERRO] Opção inválida!");
+					break;
+				}
+
+			} catch (InputMismatchException e) {
+				System.out.println("[ERRO] Digite apenas numeros ");
+				sc.nextLine();
 			}
-
 		} while (opcao != 0);
 
 
 		sc.close();
 	}
 }
-
