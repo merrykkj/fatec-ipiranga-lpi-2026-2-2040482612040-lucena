@@ -82,19 +82,43 @@ class SistemaDeBiblioteca
 	}
 
 	public static void listarLivros() {
-		// Verifica se há livros cadastrados
-		if (qtdLivros == 0 ) {
+		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
+		}
+		// Define o espaçamento das colunas para deixar a tabela organizada e alinhada.
+		// Cada numero define o a quantidade mínima de caracteres de cada colunas
+		// O sinal "-" alinha o conteúdo à esquerda, o "s" representa texto
+		// e o %n é a quebra de linha
+		String formato = "%-8s %-18s %-18s %-16s %-6s %-6s %s%n";
+		System.out.println("========== ACERVO DA BIBLIOTECA ==========");
+		System.out.printf(formato, "Código", "Título", "Autor",
+		                  "Categoria", "Ano", "Total", "Disp.");
 
-		} else {
-			System.out.println(" ==== LIVROS CADASTRADOS ====");
-			// Percorre os livros cadastrados e exibe suas informações na tela.
-			for (int i=0; i < qtdLivros; i++) {
-				exibirDadosLivro(i);
-				System.out.println("------------------------");
+		int somaExemplares = 0;
+		for (int i = 0; i < qtdLivros; i++) {
+			System.out.printf(formato,
+			                  codigoLivros[i],
+			                  tituloLivros[i],
+			                  autoresLivros[i],
+			                  NOMES_CATEGORIAS[categoriasLivros[i] - 1],
+			                  anosPublicacao[i],
+			                  totalExemplares[i],
+			                  exemplaresDisponiveis[i]);
+
+			somaExemplares = somaExemplares + totalExemplares[i];
+		}
+		System.out.println("\nTotal de títulos: " + qtdLivros);
+		System.out.println("Total de exemplares: " + somaExemplares);
+	}
+
+	public static int buscarIndiceLivro(int codigo) {
+		for (int i=0; i < qtdLivros; i++) {
+			if (codigo == codigoLivros[i]) {
+				return i;
 			}
 		}
+		return -1;
 	}
 
 	public static void buscarLivroPorCodigo () {
@@ -115,15 +139,6 @@ class SistemaDeBiblioteca
 		}
 	}
 
-
-	public static int buscarIndiceLivro(int codigo) {
-		for (int i=0; i < qtdLivros; i++) {
-			if (codigo == codigoLivros[i]) {
-				return i;
-			}
-		}
-		return -1;
-	}
 
 	public static void listarLivrosDisponiveis () {
 		boolean livroDisponivel = false;
