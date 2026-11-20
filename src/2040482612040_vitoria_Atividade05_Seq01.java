@@ -184,10 +184,9 @@ class SistemaDeBiblioteca
 			System.out.println(" ==== LIVROS CADASTRADOS ====");
 			// Percorre os livros cadastrados e exibe suas informações na tela.
 			for (int i=0; i < qtdLivros; i++) {
-				System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[i] - 1] +
-				                   "\nCódigo do livro: " + codigoLivro[i] + "\nTítulo: " +
-				                   tituloLivros[i] + "\nAutor: " + autoresLivros[i] +
-				                   "\nAno de publicação: " + anosPublicacao[i] + "\nTotal de Exemplares: " + totalExemplares[i] + "\nExemplares disponíveis: " + exemplaresDisponiveis[i]);
+				exibirDadosLivro(codigoLivro, tituloLivros, autoresLivros,
+				                 categoriasLivros, anosPublicacao, totalExemplares,
+				                 exemplaresDisponiveis, i);
 				System.out.println("------------------------");
 			}
 		}
@@ -217,15 +216,11 @@ class SistemaDeBiblioteca
 		}
 
 		if (livroEncontrado) {
-			System.out.println(" ==== LIVRO ENCONTRADO ====");
-			System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[indiceLivro] - 1] +
-			                   "\nCódigo do livro: " + codigoLivro[indiceLivro] +
-			                   "\nTítulo: " + tituloLivros[indiceLivro] +
-			                   "\nAutor: " + autoresLivros[indiceLivro] +
-			                   "\nAno de publicação: " + anosPublicacao[indiceLivro] +
-			                   "\nTotal de Exemplares: " + totalExemplares[indiceLivro] +
-			                   "\nExemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
-		} else {
+			exibirDadosLivro(codigoLivro, tituloLivros, autoresLivros,
+			                 categoriasLivros, anosPublicacao, totalExemplares,
+			                 exemplaresDisponiveis, indiceLivro);
+		}
+		else {
 			System.out.println("[AVISO] Livro não encontrado.");
 		}
 	}
@@ -254,14 +249,11 @@ class SistemaDeBiblioteca
 		}
 
 		if (livroEncontrado) {
-			System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[indiceLivro] - 1] +
-			                   "\nCódigo do livro: " + codigoLivro[indiceLivro] +
-			                   "\nTítulo: " + tituloLivros[indiceLivro] +
-			                   "\nAutor: " + autoresLivros[indiceLivro] +
-			                   "\nAno de publicação: " + anosPublicacao[indiceLivro] +
-			                   "\nTotal de Exemplares: " + totalExemplares[indiceLivro] +
-			                   "\nExemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
-		}    else {
+			exibirDadosLivro(codigoLivro, tituloLivros, autoresLivros,
+			                 categoriasLivros, anosPublicacao, totalExemplares,
+			                 exemplaresDisponiveis, indiceLivro);
+		}
+		else {
 			System.out.println("[AVISO] Livro não encontrado.");
 		}
 
@@ -281,14 +273,9 @@ class SistemaDeBiblioteca
 		// Verifica os livros disponíveis
 		for (int i=0; i < qtdLivros; i++) {
 			if (exemplaresDisponiveis[i] > 0) {
-				System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[i] - 1] +
-				                   "\nCódigo do livro: " + codigoLivro[i] +
-				                   "\nTítulo: " + tituloLivros[i] +
-				                   "\nAutor: " + autoresLivros[i] +
-				                   "\nAno de publicação: " + anosPublicacao[i] +
-				                   "\nTotal de Exemplares: " + totalExemplares[i] +
-				                   "\nExemplares disponíveis: " + exemplaresDisponiveis[i]);
-
+				exibirDadosLivro(codigoLivro, tituloLivros, autoresLivros,
+				                 categoriasLivros, anosPublicacao, totalExemplares,
+				                 exemplaresDisponiveis, i);
 				livroDisponivel = true;
 			}
 		}
@@ -298,6 +285,18 @@ class SistemaDeBiblioteca
 		}
 	}
 
+	public static void exibirDadosLivro(int [] codigoLivro, String[] tituloLivros, String[] autoresLivros, int[] categoriasLivros,
+	                                    int[] anosPublicacao, int[] totalExemplares, int[] exemplaresDisponiveis, int indiceLivro) {
+
+
+		System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[indiceLivro] - 1] +
+		                   "\nCódigo do livro: " + codigoLivro[indiceLivro] +
+		                   "\nTítulo: " + tituloLivros[indiceLivro] +
+		                   "\nAutor: " + autoresLivros[indiceLivro] +
+		                   "\nAno de publicação: " + anosPublicacao[indiceLivro] +
+		                   "\nTotal de Exemplares: " + totalExemplares[indiceLivro] +
+		                   "\nExemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
+	}
 
 
 	public static void main(String[] args) {
