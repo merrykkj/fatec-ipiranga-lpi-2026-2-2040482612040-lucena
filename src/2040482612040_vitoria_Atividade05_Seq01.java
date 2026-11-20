@@ -99,27 +99,15 @@ class SistemaDeBiblioteca
 
 	public static void buscarLivroPorCodigo () {
 		int buscaCodigo;
-		boolean livroEncontrado = false;
-		int indiceLivro = -1;
-
 		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
 		}
-
 		System.out.print("Digite o código do livro: ");
 		buscaCodigo = sc.nextInt();
+		int indiceLivro = buscarIndiceLivro(buscaCodigo);
 
-		// Laço que percorre os livros e encontra o índice do livro solicitado
-		for (int i=0; i < qtdLivros; i++) {
-			if (buscaCodigo == codigoLivros[i]) {
-				livroEncontrado = true;
-				indiceLivro = i;
-				break;
-			}
-		}
-
-		if (livroEncontrado) {
+		if (indiceLivro != -1) {
 			exibirDadosLivro(indiceLivro);
 		}
 		else {
@@ -127,6 +115,15 @@ class SistemaDeBiblioteca
 		}
 	}
 
+
+	public static int buscarIndiceLivro(int codigo) {
+		for (int i=0; i < qtdLivros; i++) {
+			if (codigo == codigoLivros[i]) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 	public static void listarLivrosDisponiveis () {
 		boolean livroDisponivel = false;
@@ -187,10 +184,7 @@ class SistemaDeBiblioteca
 		}
 		System.out.println("Titulo: " + tituloLivros[indiceMaiorEmprestimo] + "\nQuantidade de empréstimos: " + emprestimoMaior);
 
-
-
 	}
-
 
 	public static int lerCodigoLivro () {
 		// Cadastro do código do livro
@@ -204,28 +198,18 @@ class SistemaDeBiblioteca
 				if (codigo > 9999 || codigo < 100) {
 					System.out.println("[ERRO] O código deve estar entre 100 e 9999!");
 				} else {
-					boolean codigoRepetido = false;
-					for (int i=0; i < qtdLivros; i++) {
-						if (codigo == codigoLivros[i] ) {
-							System.out.println("[ERRO] O código já existe!");
-							codigoRepetido = true;
-
-							break;
-						}
-
-					}
-					if (!codigoRepetido) {
+					if (buscarIndiceLivro(codigo) == -1) {
 						condicao = true;
+					} else {
+						System.out.println("[ERRO] O código já existe!");
 					}
 				}
-
 				// Erro caso o usuário digite letras ou caracteres inválidos
 			} catch (InputMismatchException e) {
 				System.out.println("[ERRO] Digite apenas números inteiros!");
 				sc.nextLine();
 			}
 		} while (!condicao);
-
 		return codigo;
 	}
 
@@ -264,6 +248,30 @@ class SistemaDeBiblioteca
 		return numero;
 	}
 
+	public static void adicionarExemplares() {
+		int codigo;
+		if (qtdLivros == 0) {
+			System.out.println("[AVISO] O acervo está vazio.");
+			return;
+		}
+		codigo = lerInteiroValido("Digite o código do livro: ", 100, 9999);
+		int indiceLivro = buscarIndiceLivro(codigo);
+
+		if (indiceLivro == -1) {
+			System.out.println("[AVISO] Livro não encontrado.");
+			return;
+		}
+		int exemplaresNovos = lerInteiroValido("Digite a quantidade de novos exemplares: ", 1, 50);
+		totalExemplares[indiceLivro] += exemplaresNovos;
+		exemplaresDisponiveis[indiceLivro] += exemplaresNovos;
+
+		System.out.println("[SUCESSO] Exemplares adicionados com sucesso.");
+		System.out.println("Livro: " + tituloLivros[indiceLivro]);
+		System.out.println("Total de exemplares: " + totalExemplares[indiceLivro]);
+		System.out.println("Exemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
+
+	}
+
 	public static void main(String[] args) {
 
 		int opcao = -1;
@@ -276,6 +284,7 @@ class SistemaDeBiblioteca
 				System.out.println("[1] Cadastrar Livro");
 				System.out.println("[2] Listar Livros");
 				System.out.println("[3] Buscar livro por código");
+				System.out.println("[4] Adicionar exemplares");
 				System.out.println("[5] Listar livros disponíveis");
 				System.out.println("[6] Exibir livro mais emprestado");
 				System.out.println("[0] Sair");
@@ -292,6 +301,9 @@ class SistemaDeBiblioteca
 					break;
 				case 3:
 					buscarLivroPorCodigo();
+					break;
+				case 4:
+					adicionarExemplares();
 					break;
 				case 5:
 					listarLivrosDisponiveis();
