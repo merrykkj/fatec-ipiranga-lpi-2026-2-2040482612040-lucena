@@ -172,6 +172,26 @@ class SistemaDeBiblioteca
 
 	}
 
+	public static void listarLivros(int [] codigoLivro, String[] tituloLivros, String[] autoresLivros, int[] categoriasLivros,
+	                                int[] anosPublicacao, int[] totalExemplares, int[] exemplaresDisponiveis, int qtdLivros) {
+
+		// Verifica se há livros cadastrados
+		if (qtdLivros == 0 ) {
+			System.out.println("[AVISO] O acervo está vazio.");
+
+		} else {
+			System.out.println(" ==== LIVROS CADASTRADOS ====");
+			// Percorre os livros cadastrados e exibe suas informações na tela.
+			for (int i=0; i < qtdLivros; i++) {
+				System.out.println("Categoria: " + NOMES_CATEGORIAS[categoriasLivros[i] - 1] +
+				                   "\nCódigo do livro: " + codigoLivro[i] + "\nTítulo:" +
+				                   tituloLivros[i] + "\nAutor: " + autoresLivros[i] +
+				                   "\nAno de publicação: " + anosPublicacao[i] + "\nTotal de Exemplares: " + totalExemplares[i] + "\nExemplares disponíveis: " + exemplaresDisponiveis[i]);
+				System.out.println("------------------------");
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		Scanner sc = new Scanner (System.in);
 		int[] codigoLivros = new int[MAX_LIVROS];
@@ -204,6 +224,11 @@ class SistemaDeBiblioteca
 					qtdLivros = cadastrarLivro(codigoLivros, tituloLivros, autoresLivros,
 					                           categoriasLivros, anosPublicacao, totalExemplares,
 					                           exemplaresDisponiveis, qtdLivros, sc);
+					break;
+				case 2:
+					listarLivros(codigoLivros, tituloLivros, autoresLivros,
+					             categoriasLivros, anosPublicacao, totalExemplares,
+					             exemplaresDisponiveis, qtdLivros);
 					break;
 				case 0:
 					System.out.println("Saindo do sistema...");
