@@ -23,8 +23,7 @@ class SistemaDeBiblioteca
 	static final int[] LIMITE_POR_TIPO = {2, 4, 1}; // livros simultâneos
 
 	static Scanner sc = new Scanner(System.in);
-	// Vetores que guardam as informações dos livros.
-	// Os dados de um mesmo livro ficam na mesma posição dos vetores.
+	// Os dados de cada livro ficam na mesma posição dos vetores.
 	static int[] codigoLivros = new int[MAX_LIVROS];
 	static String[] tituloLivros = new String[MAX_LIVROS];
 	static String[] autoresLivros = new String[MAX_LIVROS];
@@ -34,13 +33,13 @@ class SistemaDeBiblioteca
 	static int[] exemplaresDisponiveis = new int[MAX_LIVROS];
 	static int[] contadorEmprestimos = new int[MAX_LIVROS];
 
-	// Vetores que guardam as informações dos leitores.
+	// Os dados de cada leitor ficam na mesma posição dos vetores.
 	static int[] codigoLeitores = new int [MAX_LEITORES];
 	static String[] nomeLeitores = new String[MAX_LEITORES];
 	static int[] tipoLeitores = new int[MAX_LEITORES];
 	static int[] emprestimosEmAberto = new int [MAX_LEITORES];
 
-	// Vetores que guardam as informações dos empréstimos.
+	// Guarda os dados de cada empréstimo, incluindo prazo, devolução e multa.
 	static int[] codigosEmprestimos = new int [MAX_EMPRESTIMOS];
 	static int[] empCodigoLivro = new int [MAX_EMPRESTIMOS];
 	static int[] empCodigoLeitor = new int [MAX_EMPRESTIMOS];
@@ -48,26 +47,24 @@ class SistemaDeBiblioteca
 	static int[] empDiaPrevisto = new int [MAX_EMPRESTIMOS];
 	static int[] empDiaDevolucao = new int [MAX_EMPRESTIMOS];
 	static double[] empMulta = new double [MAX_EMPRESTIMOS];
+	// Matriz que conta os empréstimos por tipo de leitor e categoria.
 	static int[][] emprestimosTipoCategoria = new int[3][5];
 
 	static int qtdLivros = 0;
 	static int qtdLeitores = 0;
 	static int qtdEmprestimos = 0;
 
-	// Método de cadastro de novos livros
+	// Cadastra um livro após validar os dados informados.
 	public static void cadastrarLivro () {
 
-		// Verifica se o vetor está cheio, senão segue para cadastro
 		if (qtdLivros >= MAX_LIVROS) {
 			System.out.print("[ERRO] O acervo está totalmente cheio!");
 			return;
 		}
 
 		int codigo = lerCodigoLivro();
-		// Limpa a quebra de linha que ficou no Scanner.
 		sc.nextLine();
 
-		// Se o usuário digitar 0, cancela o cadastro e volta para o menu.
 		if (codigo == 0) {
 			System.out.println("[AVISO] Cadastro cancelado.");
 			return;
@@ -120,7 +117,7 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Guarda os dados nos vetores após validar todas as informações.
+		// Salva o livro na próxima posição disponível dos vetores.
 		contadorEmprestimos[qtdLivros] = 0;
 		codigoLivros[qtdLivros] = codigo;
 		tituloLivros[qtdLivros] = tituloLivro;
@@ -135,10 +132,10 @@ class SistemaDeBiblioteca
 
 	}
 
+	// Adiciona exemplares a um livro já cadastrado.
 	public static void adicionarExemplares() {
 		int codigo;
 
-		// Verifica se existem livros cadastrados no acervo.
 		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
@@ -146,51 +143,41 @@ class SistemaDeBiblioteca
 
 		codigo = lerInteiroValido("Digite o código do livro: ", 100, 9999);
 
-		// Se o usuário digitar 0, cancela a operação e volta para o menu.
 		if (codigo == 0) {
 			System.out.println("[AVISO] Operação cancelada.");
 			return;
 		}
 
-		// Busca a posição do livro nos vetores através do código informado.
 		int indiceLivro = buscarIndiceLivro(codigo);
 
-		// Se retornar -1, significa que o livro não está cadastrado.
 		if (indiceLivro == -1) {
 			System.out.println("[AVISO] Livro não encontrado.");
 			return;
 		}
 
-		// A quantidade de novos exemplares deve estar entre 1 e 50.
 		int exemplaresNovos = lerInteiroValido("Digite a quantidade de novos exemplares: ", 1, 50);
 
-		// Permite cancelar a operação antes de alterar os vetores.
 		if (exemplaresNovos == 0) {
 			System.out.println("[AVISO] Operação cancelada.");
 			return;
 		}
 
-		// Soma os novos exemplares ao total e à quantidade disponível,
-		// já que os exemplares adicionados ainda não foram emprestados.
 		totalExemplares[indiceLivro] += exemplaresNovos;
 		exemplaresDisponiveis[indiceLivro] += exemplaresNovos;
 
-		// Mostra as informações do livro com as quantidades atualizadas.
 		System.out.println("[SUCESSO] Exemplares adicionados com sucesso.");
 		System.out.println("Livro: " + tituloLivros[indiceLivro]);
 		System.out.println("Total de exemplares: " + totalExemplares[indiceLivro]);
 		System.out.println("Exemplares disponíveis: " + exemplaresDisponiveis[indiceLivro]);
 	}
 
+	// Lista os livros cadastrados e o total de exemplares.
 	public static void listarLivros() {
 		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
 		}
-		// Define o espaçamento das colunas para deixar a tabela organizada e alinhada.
-		// Cada número define a quantidade mínima de caracteres de cada coluna.
-		// O sinal "-" alinha o conteúdo à esquerda, o "s" representa texto
-		// e o %n é a quebra de linha
+		// Define a largura das colunas para alinhar a tabela.
 		String formato = "%-8s %-18s %-18s %-16s %-6s %-6s %s%n";
 		System.out.println("========== ACERVO DA BIBLIOTECA ==========");
 		System.out.printf(formato, "Código", "Título", "Autor",
@@ -213,10 +200,10 @@ class SistemaDeBiblioteca
 		System.out.println("Total de exemplares: " + somaExemplares);
 	}
 
+	// Consulta os dados de um livro pelo código.
 	public static void buscarLivroPorCodigo () {
 		int buscaCodigo;
 
-		// Verifica se existem livros cadastrados antes de realizar a busca.
 		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
@@ -224,17 +211,13 @@ class SistemaDeBiblioteca
 
 		buscaCodigo = lerInteiroValido("Digite o código do livro: ", 100, 9999);
 
-		// Permite cancelar a consulta e voltar para o menu.
 		if (buscaCodigo == 0) {
 			System.out.println("[AVISO] Consulta cancelada.");
 			return;
 		}
 
-		// Busca a posição do livro nos vetores pelo código informado.
 		int indiceLivro = buscarIndiceLivro(buscaCodigo);
 
-		// Se o livro for encontrado, mostra suas informações.
-		// Caso contrário, informa que o livro não está cadastrado.
 		if (indiceLivro != -1) {
 			exibirDadosLivro(indiceLivro);
 		}
@@ -244,14 +227,13 @@ class SistemaDeBiblioteca
 	}
 
 
+	// Mostra apenas os livros da categoria escolhida.
 	public static void pesquisaPorCategoria() {
 		if (qtdLivros == 0) {
 			System.out.println("[AVISO] O acervo está vazio.");
 			return;
 		}
 		for (int i=0; i < NOMES_CATEGORIAS.length; i++) {
-			// O vetor vai de 0 até 4 por isso adicionamos +1 para que
-			// apareça as categorias de 1 até 5
 			System.out.println("[" + (i + 1) + "] " + NOMES_CATEGORIAS[i]);
 		}
 
@@ -271,7 +253,6 @@ class SistemaDeBiblioteca
 
 		int livrosEncontrados = 0;
 
-		// Percorre os livros e mostra apenas os que pertencem à categoria escolhida.
 		for (int i = 0; i < qtdLivros; i++) {
 			if (categoriasLivros[i] == categoriaEscolhida) {
 				System.out.printf(formato,
@@ -295,6 +276,7 @@ class SistemaDeBiblioteca
 	}
 
 
+	// Exibe somente os livros com exemplares disponíveis.
 	public static void listarLivrosDisponiveis () {
 		boolean livroDisponivel = false;
 
@@ -303,7 +285,6 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Verifica os livros disponíveis
 		for (int i=0; i < qtdLivros; i++) {
 			if (exemplaresDisponiveis[i] > 0) {
 				exibirDadosLivro(i);
@@ -316,6 +297,7 @@ class SistemaDeBiblioteca
 		}
 	}
 
+	// Identifica o livro com mais empréstimos registrados.
 	public static void exibirLivroMaisEmprestado() {
 
 
@@ -344,7 +326,7 @@ class SistemaDeBiblioteca
 
 	}
 
-	// Exibe as informações do livro e calcula quantos exemplares estão emprestados.
+	// Calcula os exemplares emprestados e mostra os dados do livro.
 	public static void exibirDadosLivro(int indiceLivro) {
 		int totalEmprestado;
 		totalEmprestado = totalExemplares[indiceLivro] - exemplaresDisponiveis[indiceLivro];
@@ -359,8 +341,7 @@ class SistemaDeBiblioteca
 		                   "\nExemplares emprestados: " + totalEmprestado);
 	}
 
-	// Procura a posição do livro pelo código.
-	// Caso não encontre, retorna -1.
+	// Retorna a posição do livro ou -1 se não encontrar.
 	public static int buscarIndiceLivro(int codigo) {
 		for (int i=0; i < qtdLivros; i++) {
 			if (codigo == codigoLivros[i]) {
@@ -370,8 +351,8 @@ class SistemaDeBiblioteca
 		return -1;
 	}
 
+	// Valida o código e impede o cadastro de livros repetidos.
 	public static int lerCodigoLivro () {
-		// Cadastro do código do livro
 		int codigo = 0;
 		boolean condicao = false;
 		do {
@@ -393,7 +374,6 @@ class SistemaDeBiblioteca
 						System.out.println("[ERRO] O código já existe!");
 					}
 				}
-				// Erro caso o usuário digite letras ou caracteres inválidos
 			} catch (InputMismatchException e) {
 				System.out.println("[ERRO] Digite apenas números inteiros!");
 				sc.nextLine();
@@ -402,74 +382,62 @@ class SistemaDeBiblioteca
 		return codigo;
 	}
 
+	// Não aceita texto vazio ou ponto e vírgula, usado na separação dos arquivos.
 	public static String lerTexto (String mensagem) {
 		String texto;
 
-		// Repete a leitura enquanto o texto digitado for inválido.
 		do {
 			System.out.println(mensagem + " (/cancelar para sair)");
 
-			// Remove os espaços em branco do início e do final do texto.
 			texto = sc.nextLine().trim();
 
-			// Ignora letras maiúsculas e minúsculas ao comparar os textos.
-			// Retorna null caso o usuário queira cancelar a operação.
 			if (texto.equalsIgnoreCase("/cancelar")) {
 				return null;
 			}
 
-			// Não permite campos vazios ou com ponto e vírgula,
-			// pois esse caractere será usado para separar os dados nos arquivos.
 			if (texto.isEmpty() || texto.contains(";")) {
 				System.out.println("[ERRO] O campo não pode ficar vazio nem conter ponto e vírgula (;).");
 			}
 
 		} while (texto.isEmpty() || texto.contains(";"));
 
-		// Retorna o texto depois que ele for validado.
 		return texto;
 	}
 
 
+	// Valida números dentro de um intervalo e permite cancelar com 0.
 	public static int lerInteiroValido (String mensagem, int minimo, int maximo) {
 		int numero = 0;
 		boolean numeroValido = false;
 
-		// Repete a leitura enquanto o usuário não digitar um número válido.
 		do {
 			try {
 				System.out.println(mensagem + " (0 para cancelar)");
 				numero = sc.nextInt();
 
-				// Permite cancelar a operação caso o 0 não seja um valor permitido.
 				if (numero == 0 && minimo > 0) {
 					return 0;
 				}
 
-				// Verifica se o número está dentro do intervalo permitido.
 				if (numero >= minimo && numero <= maximo) {
 					numeroValido = true;
 				} else {
 					System.out.println("[ERRO] Digite um número entre " + minimo + " e " + maximo);
 				}
 
-				// Trata o erro caso o usuário digite algo que não seja um número inteiro.
 			} catch (InputMismatchException e) {
 				System.out.println("[ERRO] Digite apenas números inteiros!");
 
-				// Limpa a entrada inválida para que o usuário possa digitar novamente.
 				sc.nextLine();
 			}
 		} while (!numeroValido);
 
-		// Retorna o número depois que ele for validado.
 		return numero;
 	}
 
-	// Método de cadastro de novos leitores.
+	// Cadastra um leitor e define seu tipo de empréstimo.
 	public static void cadastrarLeitor() {
 
-		// Verifica se o limite de leitores cadastrados foi atingido.
 		if (qtdLeitores >= MAX_LEITORES) {
 			System.out.println("[ERRO] O limite de leitores foi atingido!");
 			return;
@@ -478,10 +446,8 @@ class SistemaDeBiblioteca
 		int codigo;
 		codigo = lerCodigoLeitor();
 
-		// Limpa a quebra de linha que ficou no Scanner.
 		sc.nextLine();
 
-		// Permite cancelar o cadastro e voltar para o menu.
 		if (codigo == 0) {
 			System.out.println("[AVISO] Cadastro cancelado.");
 			return;
@@ -494,13 +460,10 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Exibe os tipos de leitores disponíveis.
-		// Adiciona 1 ao índice para que as opções comecem em 1.
 		for (int i = 0; i < NOMES_TIPOS.length; i++) {
 			System.out.println("[" + (i + 1) + "] " + NOMES_TIPOS[i]);
 		}
 
-		// Solicita e valida o tipo de leitor escolhido.
 		int tipoEscolhido;
 		tipoEscolhido = lerInteiroValido("Digite o tipo de leitor: ", 1, NOMES_TIPOS.length);
 
@@ -509,19 +472,14 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Guarda os dados nos vetores após validar todas as informações.
 		codigoLeitores[qtdLeitores] = codigo;
 		nomeLeitores[qtdLeitores] = nomeLeitor;
 		tipoLeitores[qtdLeitores] = tipoEscolhido;
 
-		// Todo leitor começa sem nenhum empréstimo em aberto.
 		emprestimosEmAberto[qtdLeitores] = 0;
 
-		// Atualiza a quantidade de leitores cadastrados.
 		qtdLeitores++;
 
-		// Exibe o tipo, o prazo e o limite de empréstimos do leitor.
-		// Subtrai 1 do tipo escolhido porque os índices começam em 0.
 		System.out.println("Cadastro concluído com sucesso!");
 		System.out.println("Tipo de leitor: " + NOMES_TIPOS[tipoEscolhido - 1]);
 		System.out.println("Prazo de devolução: " + PRAZO_POR_TIPO[tipoEscolhido - 1] + " dias");
@@ -529,24 +487,19 @@ class SistemaDeBiblioteca
 	}
 
 
-	// Método que lista todos os leitores cadastrados.
+	// Mostra os leitores e seus empréstimos em aberto.
 	public static void listarLeitores() {
 
-		// Verifica se existem leitores cadastrados.
 		if (qtdLeitores == 0) {
 			System.out.println("[AVISO] Não existem leitores cadastrados.");
 			return;
 		}
 
-		// Define o espaçamento das colunas para deixar a tabela alinhada.
 		String formato = "%-8s %-18s %-18s %s%n";
 
 		System.out.println("========== LEITORES CADASTRADOS ==========");
 		System.out.printf(formato, "Código", "Nome", "Tipo", "Empréstimos");
 
-		// Percorre todos os leitores cadastrados e exibe suas informações.
-		// Mostra a quantidade de empréstimos em aberto e o limite permitido
-		// de acordo com o tipo de cada leitor.
 		for (int i = 0; i < qtdLeitores; i++) {
 			System.out.printf(formato,
 			                  codigoLeitores[i],
@@ -556,8 +509,8 @@ class SistemaDeBiblioteca
 		}
 	}
 
+	// Valida o código e impede o cadastro de leitores repetidos.
 	public static int lerCodigoLeitor () {
-		// Cadastro do código do leitor
 		int codigo = 0;
 		boolean condicao = false;
 		do {
@@ -579,7 +532,6 @@ class SistemaDeBiblioteca
 						System.out.println("[ERRO] O código já existe!");
 					}
 				}
-				// Erro caso o usuário digite letras ou caracteres inválidos
 			} catch (InputMismatchException e) {
 				System.out.println("[ERRO] Digite apenas números inteiros!");
 				sc.nextLine();
@@ -589,8 +541,7 @@ class SistemaDeBiblioteca
 	}
 
 
-	// Procura a posição do leitor pelo código.
-	// Caso não encontre, retorna -1.
+	// Retorna a posição do leitor ou -1 se não encontrar.
 	public static int buscarIndiceLeitor(int codigo) {
 		for (int i=0; i < qtdLeitores; i++) {
 			if (codigo == codigoLeitores[i]) {
@@ -601,16 +552,14 @@ class SistemaDeBiblioteca
 	}
 
 
-	// Método responsável por registrar um novo empréstimo.
+	// Registra um empréstimo após verificar as regras da biblioteca.
 	public static void realizarEmprestimo() {
 
-		// Verifica se o limite de empréstimos cadastrados foi atingido.
 		if (qtdEmprestimos >= MAX_EMPRESTIMOS) {
 			System.out.println("[AVISO] O limite de empréstimos foi atingido.");
 			return;
 		}
 
-		// Verifica se existem leitores e livros cadastrados.
 		if (qtdLeitores == 0) {
 			System.out.println("[AVISO] Não existem leitores cadastrados.");
 			return;
@@ -621,14 +570,12 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Solicita o código do leitor e permite cancelar a operação.
 		int codigoLeitor = lerInteiroValido("Digite o código do leitor: ", 1, 9999);
 		if (codigoLeitor == 0) {
 			System.out.println("[AVISO] Operação cancelada.");
 			return;
 		}
 
-		// Busca a posição do leitor nos vetores pelo código informado.
 		int indiceLeitor;
 		indiceLeitor = buscarIndiceLeitor(codigoLeitor);
 
@@ -637,7 +584,6 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Solicita e valida o código do livro.
 		int codigoLivro;
 		codigoLivro = lerInteiroValido("Digite o código do livro: ", 100, 9999);
 
@@ -646,7 +592,6 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Busca a posição do livro nos vetores.
 		int indiceLivro;
 		indiceLivro = buscarIndiceLivro(codigoLivro);
 
@@ -655,7 +600,6 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// O dia do empréstimo deve estar entre 1 e 365.
 		int diaEmprestimo;
 		diaEmprestimo = lerInteiroValido("Digite o dia do empréstimo: ", 1, 365);
 
@@ -664,14 +608,11 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Verifica se o livro possui exemplares disponíveis.
 		if (exemplaresDisponiveis[indiceLivro] == 0) {
 			System.out.println("[AVISO] Não há exemplares disponíveis.");
 			return;
 		}
 
-		// Identifica o tipo do leitor e seu limite de empréstimos.
-		// Subtrai 1 do tipo porque os índices do vetor começam em 0.
 		int tipoLeitor = tipoLeitores[indiceLeitor];
 		int limite = LIMITE_POR_TIPO[tipoLeitor - 1];
 
@@ -680,84 +621,73 @@ class SistemaDeBiblioteca
 			return;
 		}
 
-		// Impede novos empréstimos caso o leitor possua empréstimos em atraso.
+		// Leitores com empréstimos atrasados não podem pegar novos livros.
 		if (possuiAtraso(codigoLeitor, diaEmprestimo)) {
 			System.out.println("[AVISO] O leitor possui empréstimos em atraso.");
 			return;
 		}
 
-		// Impede que o leitor pegue o mesmo livro duas vezes
-		// sem devolver o exemplar anterior.
+		// Impede dois empréstimos em aberto do mesmo livro para o mesmo leitor.
 		if (possuiLivroEmprestado(codigoLeitor, codigoLivro)) {
 			System.out.println("[AVISO] O leitor possui empréstimos em aberto com este livro.");
 			return;
 		}
 
-		// Calcula o dia previsto para devolução de acordo com
-		// o prazo permitido para cada tipo de leitor.
 		int prazo = PRAZO_POR_TIPO[tipoLeitor - 1];
+		// O prazo de devolução depende do tipo de leitor.
 		int diaPrevisto = diaEmprestimo + prazo;
 
-		// Guarda os dados nos vetores após realizar todas as validações.
-		// O código do empréstimo é gerado de forma sequencial.
+		// O código do empréstimo é gerado em sequência.
 		codigosEmprestimos[qtdEmprestimos] = qtdEmprestimos + 1;
 		empCodigoLivro[qtdEmprestimos] = codigoLivro;
 		empCodigoLeitor[qtdEmprestimos] = codigoLeitor;
 		empDiaEmprestimo[qtdEmprestimos] = diaEmprestimo;
 		empDiaPrevisto[qtdEmprestimos] = diaPrevisto;
 
-		// O empréstimo começa em aberto e sem multa.
+		// O valor 0 indica que o empréstimo ainda não foi devolvido.
 		empDiaDevolucao[qtdEmprestimos] = 0;
 		empMulta[qtdEmprestimos] = 0.0;
 
-		// Atualiza a disponibilidade do livro e os contadores de empréstimos.
+		// Atualiza os exemplares e os contadores após o empréstimo.
 		exemplaresDisponiveis[indiceLivro]--;
 		emprestimosEmAberto[indiceLeitor]++;
 		contadorEmprestimos[indiceLivro]++;
 
-		// Atualiza a matriz de acordo com o tipo do leitor e a categoria do livro.
-		// Cada linha representa um tipo de leitor e cada coluna uma categoria.
 		int categoriaLivro = categoriasLivros[indiceLivro];
+		// Registra o empréstimo na matriz de tipo de leitor e categoria.
 		emprestimosTipoCategoria[tipoLeitor - 1][categoriaLivro - 1]++;
 
-		// Exibe a confirmação do empréstimo e o dia previsto para devolução.
 		System.out.println("[SUCESSO] Empréstimo realizado com sucesso!");
 		System.out.println("Código do empréstimo: " + codigosEmprestimos[qtdEmprestimos]);
 		System.out.println("Dia previsto para devolução: " + diaPrevisto);
 
-		// Atualiza a quantidade de empréstimos registrados.
 		qtdEmprestimos++;
 	}
 
-	// Verifica se o leitor já possui um empréstimo em aberto do mesmo livro.
+	// Verifica se o leitor já está com esse livro emprestado.
 	public static boolean possuiLivroEmprestado(int codigoLeitor, int codigoLivro) {
 		for (int i = 0; i < qtdEmprestimos; i++) {
 
-			// O dia da devolução igual a 0 indica que o livro ainda não foi devolvido.
 			if (empCodigoLeitor[i] == codigoLeitor && empCodigoLivro[i] == codigoLivro && empDiaDevolucao[i] == 0) {
 				return true;
 			}
 		}
 
-		// Retorna false caso não encontre nenhum empréstimo nessas condições.
 		return false;
 	}
 
-	// Verifica se o leitor possui algum empréstimo em atraso.
+	// Verifica se há empréstimos em aberto com prazo vencido.
 	public static boolean possuiAtraso(int codigoLeitor, int diaEmprestimo) {
 		for (int i = 0; i < qtdEmprestimos; i++) {
-			// Um empréstimo está atrasado quando ainda não foi devolvido
-			// e o dia previsto é menor que o dia do novo empréstimo.
 			if (empCodigoLeitor[i] == codigoLeitor && empDiaDevolucao[i] == 0 && empDiaPrevisto[i] < diaEmprestimo) {
 				return true;
 			}
 		}
-		// Retorna false caso não encontre nenhum empréstimo atrasado.
 		return false;
 	}
 
 
-	// Exibe o relatório de empréstimos por tipo de leitor e categoria.
+	// Mostra os empréstimos por tipo de leitor e categoria.
 	public static void relatorioPerfilUso() {
 		if (qtdEmprestimos == 0) {
 			System.out.println("[AVISO] Nenhum empréstimo registrado.");
@@ -766,17 +696,16 @@ class SistemaDeBiblioteca
 
 		System.out.println("========== RELATÓRIO DE PERFIL DE USO ==========");
 
-		// Define o espaçamento das colunas para deixar a tabela alinhada.
 		String formato = "%-16s %-12s %-10s %-10s %-16s %-10s %s%n";
 		System.out.printf(formato, "Tipo de leitor", "Literatura",
 		                  "Didático", "Técnico", "Infantojuvenil",
 		                  "Outros", "Total");
 
+		// Guarda os totais de cada categoria e o total geral.
 		int[] totalColunas = new int[5];
 		int totalGeral = 0;
 
-		// Percorre a matriz calculando os totais de cada linha, coluna e o total geral.
-		// As linhas representam os tipos de leitores e as colunas as categorias.
+		// Soma os empréstimos de cada tipo de leitor e categoria.
 		for (int i = 0; i < emprestimosTipoCategoria.length; i++) {
 			int totalLinha = 0;
 
@@ -796,7 +725,6 @@ class SistemaDeBiblioteca
 			                  totalLinha);
 		}
 
-		// Exibe o total de cada categoria e o total geral de empréstimos.
 		System.out.printf(formato,
 		                  "Total",
 		                  totalColunas[0],
@@ -806,8 +734,6 @@ class SistemaDeBiblioteca
 		                  totalColunas[4],
 		                  totalGeral);
 
-		// Busca a categoria mais emprestada de cada tipo de leitor,
-		// utilizando a primeira posição como referência para a comparação.
 		for (int i = 0; i < emprestimosTipoCategoria.length; i++) {
 			int indiceMaiorCategoria = 0;
 
@@ -824,7 +750,7 @@ class SistemaDeBiblioteca
 			}
 		}
 
-		// Compara os totais das colunas para encontrar a categoria mais emprestada no geral.
+		// Encontra a categoria mais emprestada no geral.
 		int indiceMaiorGeral = 0;
 
 		for (int i = 1; i < totalColunas.length; i++) {
@@ -859,7 +785,6 @@ class SistemaDeBiblioteca
 				System.out.print("Escolha uma opçao: ");
 				opcao = sc.nextInt();
 
-				// Chama o método de acordo com a opção escolhida pelo usuário.
 				switch (opcao) {
 				case 1:
 					cadastrarLivro();
