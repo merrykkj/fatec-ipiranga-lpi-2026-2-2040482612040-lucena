@@ -853,7 +853,7 @@ class SistemaDeBiblioteca
 				System.out.println("[6] Cadastrar leitor");
 				System.out.println("[7] Listar leitores");
 				System.out.println("[8] Realizar Empréstimo");
-				System.out.println("[9] Relatório de perfil de uso");
+				System.out.println("[13] Relatório de perfil de uso");
 				System.out.println("[0] Sair");
 				System.out.println("==================================================");
 				System.out.print("Escolha uma opçao: ");
@@ -885,7 +885,7 @@ class SistemaDeBiblioteca
 				case 8:
 					realizarEmprestimo();
 					break;
-				case 9:
+				case 13:
 					relatorioPerfilUso();
 					break;
 				case 0:
