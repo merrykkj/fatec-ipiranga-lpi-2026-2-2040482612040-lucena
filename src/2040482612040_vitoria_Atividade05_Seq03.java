@@ -882,6 +882,65 @@ class SistemaDeBiblioteca
 		}
 	}
 
+	// Apresenta a disponibilidade dos exemplares e o resumo geral do acervo.
+	public static void relatorioDisponibilidadeLivros() {
+		if (qtdLivros == 0) {
+			System.out.println("[AVISO] O acervo está vazio.");
+			return;
+		}
+
+		int somaExemplares = 0;
+		int totalDisponiveis = 0;
+		int totalEmprestados = 0;
+
+		// Calcula os totais de exemplares disponíveis e emprestados.
+		for (int i=0; i<qtdLivros; i++) {
+			somaExemplares = somaExemplares + totalExemplares[i];
+			totalDisponiveis = totalDisponiveis + exemplaresDisponiveis[i];
+			totalEmprestados = totalEmprestados + (totalExemplares[i] - exemplaresDisponiveis[i]);
+
+		}
+
+		double porcentagemEmprestada;
+		porcentagemEmprestada = (totalEmprestados * 100.00) / somaExemplares;
+
+		System.out.println("\n========== DISPONIBILIDADE DOS LIVROS ==========");
+
+		// Exibe a situação individual de cada livro cadastrado.
+		for (int i=0; i < qtdLivros; i++ ) {
+			System.out.printf("Código: %d%n", codigoLivros[i]);
+			System.out.printf("Título: %s%n", tituloLivros[i]);
+			System.out.printf("Total de exemplares: %d%n", totalExemplares[i]);
+			System.out.printf("Disponíveis: %d%n", exemplaresDisponiveis[i]);
+			System.out.printf("Emprestados: %d%n", totalExemplares[i] - exemplaresDisponiveis[i]);
+			System.out.println("----------------------------------------");
+		}
+		System.out.println("\n========== RESUMO GERAL ==========");
+		System.out.printf("Total de exemplares: %d%n", somaExemplares);
+		System.out.printf("Total de disponíveis: %d%n", totalDisponiveis);
+		System.out.printf("Total de emprestados: %d%n", totalEmprestados);
+		System.out.printf("Percentual emprestado: %.2f%%%n", porcentagemEmprestada);
+		System.out.println("----------------------------------------");
+
+		boolean livrosIndisponiveis = false;
+
+		System.out.println("\n========== LIVROS INDISPONÍVEIS ==========");
+
+		// Identifica os títulos que não possuem exemplares disponíveis.
+		for (int i=0; i < qtdLivros; i++) {
+			if (exemplaresDisponiveis[i] == 0) {
+				System.out.println("Título: " + tituloLivros[i]);
+				livrosIndisponiveis = true;
+			}
+		}
+
+		if (livrosIndisponiveis == false) {
+			System.out.println("[AVISO] Todos os livros possuem exemplares disponíveis.");
+			return;
+		}
+
+	}
+
 	public static void main(String[] args) {
 		int opcao = -1;
 
@@ -897,9 +956,10 @@ class SistemaDeBiblioteca
 				System.out.println("[5] Pesquisar livros por categoria");
 				System.out.println("[6] Cadastrar leitor");
 				System.out.println("[7] Listar leitores");
-				System.out.println("[8] Realizar Empréstimo");
-				System.out.println("[9] Realizar Devolução");
-				System.out.println("[10] Relatório de Emprestimos em aberto");
+				System.out.println("[8] Realizar empréstimo");
+				System.out.println("[9] Realizar devolução");
+				System.out.println("[10] Relatório de emprestimos em aberto");
+				System.out.println("[11] Relatório de disponibilidade de livros");
 				System.out.println("[13] Relatório de perfil de uso");
 				System.out.println("[0] Sair");
 				System.out.println("==================================================");
@@ -936,6 +996,9 @@ class SistemaDeBiblioteca
 					break;
 				case 10:
 					relatorioEmprestimosEmAberto();
+					break;
+				case 11:
+					relatorioDisponibilidadeLivros();
 					break;
 				case 13:
 					relatorioPerfilUso();
