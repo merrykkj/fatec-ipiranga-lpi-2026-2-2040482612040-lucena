@@ -836,6 +836,52 @@ class SistemaDeBiblioteca
 		return -1;
 	}
 
+	// Mostra os empréstimos em aberto e verifica se estão atrasados.
+	public static void relatorioEmprestimosEmAberto () {
+		if (qtdEmprestimos == 0) {
+			System.out.println("[AVISO] Nenhum empréstimo registrado.");
+			return;
+		}
+
+		int diaAtual = lerInteiroValido ("Digite o dia atual: ", 1, 365);
+		if (diaAtual == 0) {
+			System.out.println("[AVISO] Operação cancelada.");
+			return;
+		}
+
+
+		boolean possuiEmprestimoAberto = false;
+
+		// Percorre os empréstimos e mostra apenas os que não foram devolvidos.
+		for (int i=0; i < qtdEmprestimos; i++) {
+			if (empDiaDevolucao[i] == 0) {
+
+				int indiceLivro  = buscarIndiceLivro(empCodigoLivro[i]);
+				int indiceLeitor = buscarIndiceLeitor(empCodigoLeitor[i]);
+
+				possuiEmprestimoAberto = true;
+
+				System.out.println("Código do empréstimo: " + codigosEmprestimos[i]);
+				System.out.println("Livro: " + tituloLivros[indiceLivro]);
+				System.out.println("Leitor: " + nomeLeitores[indiceLeitor]);
+				System.out.println("Dia do empréstimo: " + empDiaEmprestimo[i]);
+				System.out.println("Devolução prevista: " + empDiaPrevisto[i]);
+
+				if (diaAtual > empDiaPrevisto[i]) {
+					System.out.println("[AVISO] O empréstimo está atrasado.");
+				} else {
+					System.out.println("[SUCESSO] O empréstimo está dentro do prazo.");
+				}
+				System.out.println("----------------------------------------");
+			}
+		}
+		// Informa quando todos os empréstimos já foram devolvidos.
+		if (possuiEmprestimoAberto == false) {
+			System.out.println("[AVISO] Nenhum empréstimo em aberto.");
+			return;
+		}
+	}
+
 	public static void main(String[] args) {
 		int opcao = -1;
 
@@ -853,6 +899,7 @@ class SistemaDeBiblioteca
 				System.out.println("[7] Listar leitores");
 				System.out.println("[8] Realizar Empréstimo");
 				System.out.println("[9] Realizar Devolução");
+				System.out.println("[10] Relatório de Emprestimos em aberto");
 				System.out.println("[13] Relatório de perfil de uso");
 				System.out.println("[0] Sair");
 				System.out.println("==================================================");
@@ -886,6 +933,9 @@ class SistemaDeBiblioteca
 					break;
 				case 9:
 					realizarDevolucao();
+					break;
+				case 10:
+					relatorioEmprestimosEmAberto();
 					break;
 				case 13:
 					relatorioPerfilUso();
